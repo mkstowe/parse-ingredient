@@ -12,12 +12,12 @@
     "number"
   ],
   "bugs": {
-    "url": "https://github.com/jakeboone02/parse-ingredient/issues"
+    "url": "https://github.com/mkstowe/parse-ingredient/issues"
   },
-  "homepage": "https://github.com/jakeboone02/parse-ingredient",
+  "homepage": "https://github.com/mkstowe/parse-ingredient",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jakeboone02/parse-ingredient"
+    "url": "https://github.com/mkstowe/parse-ingredient"
   },
   "files": [
     "dist"
@@ -32,7 +32,7 @@
     "prepare": "npm run build",
     "publish:npm": "np",
     "publish:demo": "node gh-pages.publish.js",
-    "generate-changelog": "npx github-changes -o jakeboone02 -r parse-ingredient -a --use-commit-body --date-format=\"(YYYY-MM-DD)\""
+    "generate-changelog": "npx github-changes -o mkstowe -r parse-ingredient -a --use-commit-body --date-format=\"(YYYY-MM-DD)\""
   },
   "prettier": {
     "printWidth": 80,
