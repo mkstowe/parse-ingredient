@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "tsdx watch --format cjs,esm,system,umd",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc",
     "test": "jest",
     "prepare": "npm run build",
     "publish:npm": "np",
