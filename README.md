@@ -1,15 +1,15 @@
 # parse-ingredient
 
-[![npm version](https://badge.fury.io/js/parse-ingredient.svg)](//npmjs.com/package/parse-ingredient)
-![workflow status](https://github.com/jakeboone02/parse-ingredient/workflows/Continuous%20Integration/badge.svg)
-[![codecov.io](https://codecov.io/github/jakeboone02/parse-ingredient/coverage.svg?branch=master)](https://codecov.io/github/jakeboone02/parse-ingredient?branch=master)
-[![downloads](https://img.shields.io/npm/dm/parse-ingredient.svg)](http://npm-stat.com/charts.html?package=parse-ingredient&from=2015-08-01)
-[![MIT License](https://img.shields.io/npm/l/parse-ingredient.svg)](http://opensource.org/licenses/MIT)
+Built based on code written by Jake Boone
 
 Parses a string, which can include mixed numbers or vulgar fractions (thanks to [numeric-quantity](https://www.npmjs.com/package/numeric-quantity)), into an array of recipe ingredient objects with the following signature:
 
 ```ts
-interface Ingredient {
+export interface Ingredient {
+  /**
+   * The received input
+   */
+  input: string;
   /**
    * The primary quantity (the lower quantity in a range, if applicable)
    */
@@ -21,7 +21,19 @@ interface Ingredient {
   /**
    * The unit of measure
    */
-  unitOfMeasure: string | null;
+  unit: string | null;
+  /**
+   * The plural form of the unit
+   */
+  unitPlural: string | null;
+  /**
+   * The shorthand form of the unit
+   */
+  unitShort: string | null;
+  /**
+   * The unit as entered by the user
+   */
+  unitEntered: string | null;
   /**
    * The description
    */
@@ -37,20 +49,16 @@ For the `isGroupHeader` attribute to be `true`, the ingredient string must not s
 
 This library pairs nicely with [format-quantity](https://www.npmjs.com/package/format-quantity) which can display numeric values as imperial measurements (e.g. `'1 1/2'` instead of `1.5`).
 
-## Demo
-
-[See demo here](https://jakeboone02.github.io/parse-ingredient/).
-
 ## Installation
 
 ### npm
 
 ```shell
 # npm
-npm i parse-ingredient
+npm i mkstowe/parse-ingredient
 
 # yarn
-yarn add parse-ingredient
+yarn add mkstowe/parse-ingredient
 ```
 
 ### Browser
@@ -62,17 +70,19 @@ In the browser, available as a global function `parseIngredient`. Remember to fi
 <script src="https://unpkg.com/parse-ingredient"></script>
 <script>
   console.log(parseIngredient('1 1/2 cups sugar'));
-  /**
-   * [
-   *   {
-   *     quantity: 1.5,
-   *     quantity2: null,
-   *     unitOfMeasure: 'cups',
-   *     description: 'sugar',
-   *     isGroupHeader: false,
-   *   }
-   * ]
-   */
+  // [
+  //   {
+  //     input: '1 1/2 cups sugar',
+  //     quantity: 1.5,
+  //     quantity2: null,
+  //     unit: 'cup',
+  //     unitPlural: 'cups',
+  //     unitShort: 'c',
+  //     unitEntered: 'cups',
+  //     description: 'sugar',
+  //     isGroupHeader: false,
+  //   },
+  // ]
 </script>
 ```
 
@@ -82,74 +92,47 @@ In the browser, available as a global function `parseIngredient`. Remember to fi
 import parseIngredient from 'parse-ingredient';
 
 console.log(parseIngredient('1-2 pears'));
-/**
- * [
- *   {
- *     quantity: 1,
- *     quantity2: 2,
- *     unitOfMeasure: null,
- *     description: 'pears',
- *     isGroupHeader: false,
- *   }
- * ]
- */
+// [
+//   {
+//     input: '1-2 pears',
+//     quantity: 1,
+//     quantity2: 2,
+//     unit: null,
+//     unitPlural: null,
+//     unitShort: null,
+//     unitEntered: null,
+//     description: 'pears',
+//     isGroupHeader: false,
+//   },
+// ]
 console.log(
   parseIngredient(
     `2/3 cup flour
 1 tsp baking powder`
   )
 );
-/**
- * [
- *   {
- *     quantity: 0.667,
- *     quantity2: null,
- *     unitOfMeasure: 'cup',
- *     description: 'flour',
- *     isGroupHeader: false,
- *   },
- *   {
- *     quantity: 1,
- *     quantity2: null,
- *     unitOfMeasure: 'tsp',
- *     description: 'baking powder',
- *     isGroupHeader: false,
- *   },
- * ]
- */
-console.log(parseIngredient('For cake:'));
-/**
- * [
- *   {
- *     quantity: null,
- *     quantity2: null,
- *     unitOfMeasure: null,
- *     description: 'For cake:',
- *     isGroupHeader: true,
- *   }
- * ]
- */
-```
-
-## Options
-
-### normalizeUOM
-
-Pass `true` to convert units of measure to their long, singular form, e.g. "ml" becomes "milliliter" and "cups" becomes "cup". This can help normalize the units of measure for processing.
-
-Example:
-
-```js
-console.log(parseIngredient('1 c sugar', { normalizeUOM: true }));
-/**
- * [
- *   {
- *     quantity: 1,
- *     quantity2: null,
- *     unitOfMeasure: 'cup',
- *     description: 'sugar',
- *     isGroupHeader: false,
- *   }
- * ]
- */
+// [
+//   {
+//     input: '2/3 cup flour',
+//     quantity: 0.667,
+//     quantity2: null,
+//     unit: 'cup',
+//     unitPlural: 'cups',
+//     unitShort: 'c',
+//     unitEntered: 'cup',
+//     description: 'flour',
+//     isGroupHeader: false,
+//   },
+//   {
+//     input: '1 tsp baking powder',
+//     quantity: 1,
+//     quantity2: null,
+//     unit: 'teaspoon',
+//     unitPlural: 'teaspoons',
+//     unitShort: 'tsp',
+//     unitEntered: 'tsp',
+//     description: 'baking powder',
+//     isGroupHeader: false,
+//   },
+// ];
 ```

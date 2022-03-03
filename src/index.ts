@@ -1,6 +1,12 @@
 import numericQuantity from 'numeric-quantity';
+// import wordsToNumbers from 'words-to-numbers';
+import { units, unitsPlural, unitsShort } from './units';
 
 export interface Ingredient {
+  /**
+   * The received input
+   */
+  input: string;
   /**
    * The primary quantity (the lower quantity in a range, if applicable)
    */
@@ -12,7 +18,19 @@ export interface Ingredient {
   /**
    * The unit of measure
    */
-  unitOfMeasure: string | null;
+  unit: string | null;
+  /**
+   * The plural form of the unit
+   */
+  unitPlural: string | null;
+  /**
+   * The shorthand form of the unit
+   */
+  unitShort: string | null;
+  /**
+   * The unit as entered by the user
+   */
+  unitEntered: string | null;
   /**
    * The description
    */
@@ -27,38 +45,16 @@ export interface ParseIngredientOptions {
   normalizeUOM?: boolean;
 }
 
-const UOM_LIST = [
-  ['cup', 'cups', 'c', 'c.', 'C'],
-  ['teaspoon', 'teaspoons', 'tsp', 'tsp.', 't'],
-  ['tablespoon', 'tablespoons', 'tbsp', 'tbsp.', 'T'],
-  ['ounce', 'ounces', 'oz', 'oz.'],
-  ['pint', 'pints', 'pt', 'pt.'],
-  ['pound', 'pounds', 'lb', 'lb.', 'lbs', 'lbs.'],
-  ['gram', 'grams', 'g', 'g.'],
-  ['kilogram', 'kilograms', 'kg', 'kg.'],
-  ['stick', 'sticks'],
-  ['inch', 'inches', 'in', 'in.'],
-  ['foot', 'feet', 'ft', 'ft.'],
-  ['quart', 'quarts', 'qt', 'qt.'],
-  ['liter', 'liters', 'l'],
-  ['pinch', 'pinches'],
-  ['piece', 'pieces', 'pcs', 'pcs.'],
-  ['milligram', 'mg', 'mg.'],
-  ['milliliter', 'ml', 'mL', 'ml.', 'mL.'],
-  ['quart', 'quarts', 'qt', 'qt.', 'qts', 'qts.'],
-  ['gallon', 'gallons', 'gal', 'gal.'],
-];
-
 /**
  * Removes falsy values from an array
  *
  * Originally from lodash: https://github.com/lodash/lodash/blob/4.17.15/lodash.js#L6874
  */
-const compactArray = <T>(array: T[]) => {
+function compactArray(array: any[]) {
   let index = -1;
   const length = array.length;
   let resIndex = 0;
-  const result: T[] = [];
+  const result: any[] = [];
 
   while (++index < length) {
     const value = array[index];
@@ -67,16 +63,13 @@ const compactArray = <T>(array: T[]) => {
     }
   }
   return result;
-};
+}
 
 /**
  * Parses a string into an array of recipe ingredient objects
  * @param ingText The ingredient text
  */
-const parseIngredient = (
-  ingText: string,
-  options?: ParseIngredientOptions
-): Ingredient[] => {
+export function parseIngredient(ingText: string): Ingredient[] {
   const arrRaw = compactArray(
     ingText
       .replace(/\n{2,}/g, '\n')
@@ -86,15 +79,25 @@ const parseIngredient = (
 
   const arrIngs = arrRaw.map(line => {
     const oIng: Ingredient = {
+      input: line,
       quantity: null,
       quantity2: null,
-      unitOfMeasure: null,
+      unit: null,
+      unitPlural: null,
+      unitShort: null,
+      unitEntered: null,
       description: '',
       isGroupHeader: false,
     };
 
     // Check if the first character is numeric.
     const nqResultFirstChar = numericQuantity(line.substring(0, 1));
+    const firstWord = line.replace(/ .*/, '');
+    // let wordToNumber;
+
+    // if (typeof(wordsToNumbers(firstWord)) == 'number') {
+    // wordToNumber = wordsToNumbers(firstWord);
+    // }
 
     // If the first character is not numeric, the entire line is the description.
     if (isNaN(nqResultFirstChar)) {
@@ -162,34 +165,59 @@ const parseIngredient = (
     const firstWordREMatches = firstWordRE.exec(oIng.description);
     if (firstWordREMatches) {
       const firstWord = firstWordREMatches[1];
-      const remainingDesc = firstWordREMatches[2];
-      let uom = '';
-      let uomBase = '';
-      let i = 0;
+      let remainingDesc = firstWordREMatches[2];
 
-      while (i < UOM_LIST.length && !uom) {
-        const ndx = UOM_LIST[i].indexOf(firstWord);
-        if (ndx >= 0) {
-          uom = UOM_LIST[i][ndx];
-          uomBase = UOM_LIST[i][0];
-        }
-        i++;
+      oIng.unitEntered = firstWord;
+      oIng.unit = getUnit(firstWord);
+      if (oIng.unit) {
+        oIng.unitPlural = unitsPlural.get(oIng.unit)!;
+        oIng.unitShort = unitsShort.get(oIng.unit)!;
       }
 
-      if (uom) {
-        if (options?.normalizeUOM) {
-          oIng.unitOfMeasure = uomBase;
-        } else {
-          oIng.unitOfMeasure = uom;
-        }
-        oIng.description = remainingDesc.trim();
+      remainingDesc = remainingDesc.trim();
+      // Remove next word if it is "of"
+      if (remainingDesc.replace(/ .*/, '') == 'of') {
+        remainingDesc = remainingDesc.replace('of', '');
       }
+
+      oIng.description = remainingDesc.trim();
     }
 
     return oIng;
   });
 
   return arrIngs;
-};
+}
 
-export default parseIngredient;
+function getUnit(input: string) {
+  // Remove whitespace and period from input
+  input.replace('/s/g', '');
+  input.replace('/./g', '');
+
+  // Special cases where capitalization matters
+  if (input == 't') {
+    return 'teaspoon';
+  }
+  if (input == 'T') {
+    return 'tablespoon';
+  }
+
+  // Make input all lower case
+  input = input.toLowerCase();
+
+  // Return input if it's already normalized form
+  if (units.has(input)) {
+    return input;
+  }
+
+  // Check if input matches any of the unit variants
+  for (let [key, val] of units) {
+    for (let variant of val) {
+      if (input == variant) {
+        return key;
+      }
+    }
+  }
+
+  return null;
+}
