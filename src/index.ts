@@ -65,7 +65,7 @@ function compactArray(array: any[]) {
  * Parses a string into an array of recipe ingredient objects
  * @param ingText The ingredient text
  */
-export function parseIngredient(ingText: string): Ingredient[] {
+function parseIngredient(ingText: string): Ingredient[] {
   const arrRaw = compactArray(
     ingText
       .replace(/\n{2,}/g, '\n')
@@ -217,3 +217,5 @@ function getUnit(input: string) {
 
   return null;
 }
+
+export default { parseIngredient }

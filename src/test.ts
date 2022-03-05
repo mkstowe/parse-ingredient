@@ -1,5 +1,5 @@
-import { parseIngredient } from "./index";
+import Parse from "./index";
 
 console.log(
-  parseIngredient("For cake:")
+  Parse.parseIngredient("For cake:")
 );
