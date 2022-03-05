@@ -218,4 +218,4 @@ function getUnit(input: string) {
   return null;
 }
 
-export default { parseIngredient }
+module.exports = parseIngredient;
