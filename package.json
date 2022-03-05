@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "tsdx watch --format cjs,esm,system,umd",
-    "build": "tsdx build --format cjs,esm,system,umd",
+    "build": "tsdx build",
     "test": "jest",
     "prepare": "npm run build",
     "publish:npm": "np",

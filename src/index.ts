@@ -1,5 +1,3 @@
-
-
 import numericQuantity from 'numeric-quantity';
 
 // import wordsToNumbers from 'words-to-numbers';
