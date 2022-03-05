@@ -1,4 +1,7 @@
+
+
 import numericQuantity from 'numeric-quantity';
+
 // import wordsToNumbers from 'words-to-numbers';
 import { units, unitsPlural, unitsShort } from './units';
 
@@ -65,7 +68,7 @@ function compactArray(array: any[]) {
  * Parses a string into an array of recipe ingredient objects
  * @param ingText The ingredient text
  */
-function parseIngredient(ingText: string): Ingredient[] {
+const parseIngredient = (ingText: string): Ingredient[] => {
   const arrRaw = compactArray(
     ingText
       .replace(/\n{2,}/g, '\n')
@@ -218,4 +221,4 @@ function getUnit(input: string) {
   return null;
 }
 
-module.exports = parseIngredient;
+export default parseIngredient;
