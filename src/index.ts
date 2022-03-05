@@ -41,10 +41,6 @@ export interface Ingredient {
   isGroupHeader: boolean;
 }
 
-export interface ParseIngredientOptions {
-  normalizeUOM?: boolean;
-}
-
 /**
  * Removes falsy values from an array
  *
@@ -92,7 +88,7 @@ export function parseIngredient(ingText: string): Ingredient[] {
 
     // Check if the first character is numeric.
     const nqResultFirstChar = numericQuantity(line.substring(0, 1));
-    const firstWord = line.replace(/ .*/, '');
+    // const firstWord = line.replace(/ .*/, '');
     // let wordToNumber;
 
     // if (typeof(wordsToNumbers(firstWord)) == 'number') {
