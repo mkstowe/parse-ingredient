@@ -158,38 +158,51 @@ const parseIngredient = (ingText: string): Ingredient[] => {
     }
 
     // Check for a known unit of measure
-    const firstWordRE = /^([a-zA-Z.]+)\b(.+)/;
+    const firstWordRE = /^([a-zA-Z.]+)(.+)/;
     const firstWordREMatches = firstWordRE.exec(oIng.description);
     if (firstWordREMatches) {
       const firstWord = firstWordREMatches[1];
       let remainingDesc = firstWordREMatches[2];
 
-      oIng.unitEntered = firstWord;
+      if (remainingDesc[0] == '.' || remainingDesc[0] == ',') {
+        remainingDesc = remainingDesc.substring(1);
+      }
+
+      // if (numericQuantity(firstWord)) {
+      //   oIng.unitEntered = firstWord;
+      // }
+
+
       oIng.unit = getUnit(firstWord);
       if (oIng.unit) {
         oIng.unitPlural = unitsPlural.get(oIng.unit)!;
         oIng.unitShort = unitsShort.get(oIng.unit)!;
+        oIng.unitEntered = firstWord;
       }
 
       remainingDesc = remainingDesc.trim();
       // Remove next word if it is "of"
-      if (remainingDesc.replace(/ .*/, '') == 'of') {
-        remainingDesc = remainingDesc.replace('of', '');
+      if (oIng.unit) {
+        if (remainingDesc.replace(/ .*/, '') == 'of') {
+          remainingDesc = remainingDesc.replace('of', '');
+          oIng.description = remainingDesc.trim();
+        } else {
+          oIng.description = remainingDesc;
+        }
+      } else {
       }
-
-      oIng.description = remainingDesc.trim();
     }
 
     return oIng;
   });
 
   return arrIngs;
-}
+};
 
 function getUnit(input: string) {
   // Remove whitespace and period from input
-  input.replace('/s/g', '');
-  input.replace('/./g', '');
+  input = input.replace(/\s/g, '');
+  input = input.replace(/\./g, '');
 
   // Special cases where capitalization matters
   if (input == 't') {
