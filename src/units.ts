@@ -1,7 +1,10 @@
 const units = new Map<string, string[]>([
   // Volume
-  ['teaspoon', ['tsp', 'tspn', 't', 'teaspoons']],
-  ['tablespoon', ['tbs', 'tbsp', 'tbspn', 'T', 'tablespoons']],
+  ['teaspoon', ['tsp', 'tsps', 'tspns', 'tspn', 't', 'teaspoons']],
+  [
+    'tablespoon',
+    ['tbs', 'tbsps', 'tbspns', 'tbsp', 'tbspn', 'T', 'tablespoons'],
+  ],
   [
     'fluid ounce',
     [
@@ -21,20 +24,30 @@ const units = new Map<string, string[]>([
     ],
   ],
   ['cup', ['c', 'cups']],
-  ['pint', ['p', 'pnt', 'pt', 'pints']],
-  ['quart', ['q', 'qt', 'quarts']],
-  ['gallon', ['gal', 'gallons']],
-  ['milliliter', ['ml', 'milliliters', 'millilitre', 'millilitres']],
+  ['pint', ['p', 'pnt', 'pnts', 'pts', 'pt', 'pints']],
+  ['quart', ['q', 'qt', 'qts', 'quarts']],
+  ['gallon', ['gal', 'gals', 'gallons']],
+  ['milliliter', ['ml', 'mls', 'milliliters', 'millilitre', 'millilitres']],
   ['liter', ['l', 'liters', 'litre', 'litres']],
 
   // Weight
   ['ounce', ['oz', 'ouncez']],
   ['pound', ['lb', 'lbs', 'pounds', '#']],
-  ['milligram', ['mg', 'milligrams', 'milligramme', 'milligrammes']],
-  ['gram', ['g', 'gm', 'grams', 'gramme', 'grammes']],
+  ['milligram', ['mg', 'mgs', 'milligrams', 'milligramme', 'milligrammes']],
+  ['gram', ['g', 'gm', 'gs', 'gms', 'grams', 'gramme', 'grammes']],
   [
     'kilogram',
-    ['kg', 'k', 'kilo', 'kilos', 'kilograms', 'kilogramme', 'kilogrammes'],
+    [
+      'kg',
+      'kgs',
+      'ks',
+      'k',
+      'kilo',
+      'kilos',
+      'kilograms',
+      'kilogramme',
+      'kilogrammes',
+    ],
   ],
 
   // Length
